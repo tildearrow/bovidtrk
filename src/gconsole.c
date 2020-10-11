@@ -36,12 +36,12 @@ unsigned bigwindow = 1;
 void loadexternalpalette(void);
 void initicon(void);
 
-inline void setcharcolor(unsigned *dptr, short ch, short color)
+static inline void setcharcolor(unsigned *dptr, short ch, short color)
 {
   *dptr = (ch & 0xff) | (color << 16);
 }
 
-inline void setcolor(unsigned *dptr, short color)
+static inline void setcolor(unsigned *dptr, short color)
 {
   *dptr = (*dptr & 0xffff) | (color << 16);
 }
@@ -52,6 +52,7 @@ int initscreen(void)
   
   if (bigwindow - 1)
   {
+    printf("this is a bigwindow! %d\n",bigwindow);
     fontwidth *= bigwindow;
     fontheight *= bigwindow;
     mousesizex *= 2;
@@ -64,11 +65,14 @@ int initscreen(void)
   win_setmousemode(MOUSE_ALWAYS_HIDDEN);
   initicon();
 
+  printf("starting up, %d*%d, %d*%d\n",MAX_COLUMNS,fontwidth, MAX_ROWS,fontheight);
   if (!gfx_init(MAX_COLUMNS * fontwidth, MAX_ROWS * fontheight, 60, 0))
   {
     win_fullscreen = 0;
-    if (!gfx_init(MAX_COLUMNS * fontwidth, MAX_ROWS * fontheight, 60, 0))
+    if (!gfx_init(MAX_COLUMNS * fontwidth, MAX_ROWS * fontheight, 60, 0)) {
+      printf("could not init gfx!\n");
       return 0;
+    }
   }
    
   scrbuffer = (unsigned*)malloc(MAX_COLUMNS * MAX_ROWS * sizeof(unsigned));
@@ -78,9 +82,15 @@ int initscreen(void)
   memset(region, 0, sizeof region);
 
   chardata = (unsigned char*)malloc(4096);
-  if (!chardata) return 0;
+  if (!chardata) {
+    printf("could not allocate chardata!\n");
+    return 0;
+  }
   handle = io_open("chargen.bin");
-  if (handle == -1) return 0;
+  if (handle == -1) {
+    printf("could not open chars!\n");
+    return 0;
+  }
   io_read(handle, &chardata[0], 4096);
   io_close(handle);
 
