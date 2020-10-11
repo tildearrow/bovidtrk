@@ -1543,16 +1543,19 @@ applied by separating the name from the ratio value using whitespace. Example:
 8. Recompiling
 --------------
 
-To recompile for Win32, you need the MinGW development environment, use the
-file src/makefile.win as makefile.
+To recompile for Win32, I still have to port it to Windows...
 
-To recompile for Linux, use src/makefile.
+To recompile for Linux:
+
+```
+mkdir build
+cd build
+cmake ..
+make
+```
 
 In both cases you need the SDL development libraries in addition to the SDL
 runtime, see http://www.libsdl.org.
-
-Compile first the utilities (datafile & dat2inc) from the src/bme directory,
-and place them to your path.
 
 
 9. Version history
